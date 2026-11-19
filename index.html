@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bán trú</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6f2;--card:#fff;--ink:#1c2b24;--mute:#5f6f66;--line:#dbe4dd;--g:#2e6b4f;--gl:#dcefe3;--r:#b8432f;--rl:#f9dfd8;--y:#8a6a12;--yl:#f7ecc6}
+@media(prefers-color-scheme:dark){:root{--bg:#121a16;--card:#1b261f;--ink:#e7efe9;--mute:#9bb0a3;--line:#2c3b32;--g:#7fd0a3;--gl:#223d2e;--r:#ff9b86;--rl:#4a2720;--y:#ecc65a;--yl:#443a18}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 "Be Vietnam Pro",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:26px;font-weight:800;margin:8px 0 2px}h2{font-size:20px;margin:4px 0 12px}
+.sub{color:var(--mute);margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 14px;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:110px}
+.big b{display:block;font-size:18px;margin-bottom:4px}.big span{color:var(--mute);font-size:14px}
+.big:hover,.big:focus-visible{border-color:var(--g)}
+.back{background:none;border:0;color:var(--g);font:inherit;font-weight:600;padding:8px 0;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:14px;font-weight:600;margin:10px 0 4px}
+select,input,textarea{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input[type=checkbox]{width:auto}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px;font-weight:600}
+.btn{width:100%;margin-top:14px;padding:12px;border:0;border-radius:10px;background:var(--g);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+@media(prefers-color-scheme:dark){.btn{color:#10231a}}
+.btn:disabled{opacity:.5}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}.row small{color:var(--mute);display:block}
+.tag{padding:3px 10px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
+.an{background:var(--gl);color:var(--g)}.vang{background:var(--rl);color:var(--r)}.chua{background:var(--yl);color:var(--y)}.nd{background:var(--line);color:var(--mute)}
+.hero{background:var(--g);color:#fff;border-radius:14px;padding:18px;margin-bottom:12px}
+@media(prefers-color-scheme:dark){.hero{color:#10231a}}
+.hero .n{font-size:56px;font-weight:800;line-height:1}.hero p{margin:6px 0 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{padding:6px 12px;border:1.5px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.tabs button.on{background:var(--g);border-color:var(--g);color:#fff}
+.sgb{display:block;width:100%;text-align:left;font:inherit;color:inherit;padding:10px;margin-top:6px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;cursor:pointer}.sgb small{color:var(--mute);margin-left:6px}.sgb:hover,.sgb:focus-visible{border-color:var(--g)}
+.msg{padding:12px;border-radius:10px;margin-top:12px;font-weight:600}
+.ok{background:var(--gl);color:var(--g)}.er{background:var(--rl);color:var(--r)}.wn{background:var(--yl);color:var(--y)}
+#reader{width:100%;border-radius:12px;overflow:hidden}
+[hidden]{display:none!important}
+</style>
+</head>
+<body><div class="w">
+
+<section id="home">
+  <h1>Bán trú</h1>
+  <p class="sub">Suất ăn trưa của học sinh</p>
+  <div class="grid">
+    <button class="big" data-go="lookup"><b>Tra cứu học sinh</b><span>Xem ngày ăn, ngày vắng</span></button>
+    <button class="big" data-go="absent"><b>Đăng ký vắng</b><span>Báo vắng bán trú</span></button>
+    <button class="big" data-go="stats"><b>Thống kê</b><span>Danh sách hôm nay</span></button>
+    <button class="big" data-go="scan"><b>Quét QR</b><span>Dành cho giáo viên</span></button>
+  </div>
+</section>
+
+<section id="lookup" hidden>
+  <button class="back" data-go="home">← Trang chủ</button><h2>Tra cứu học sinh</h2>
+  <div class="card"><div class="pk"></div>
+    <label>Tháng cần xem</label><input type="month" id="lkMonth">
+    <button class="btn" id="lkBtn">Xem</button></div>
+  <div id="lkOut"></div>
+</section>
+
+<section id="absent" hidden>
+  <button class="back" data-go="home">← Trang chủ</button><h2>Đăng ký vắng bán trú</h2>
+  <div id="abClosed" class="msg er" hidden>Ngoài thời gian đăng ký. Mở từ 13:00 đến 05:00 sáng hôm sau.</div>
+  <div class="card" id="abForm"><div class="pk"></div>
+    <label>Ngày vắng</label><input type="date" id="abDate"><small id="abThu" style="color:var(--mute)"></small>
+    <label class="chk"><input type="checkbox" id="abChk"> Có lý do</label>
+    <textarea id="abReason" rows="2" placeholder="Ví dụ: con bị ốm" disabled></textarea>
+    <button class="btn" id="abBtn">Gửi đăng ký</button><div id="abMsg"></div></div>
+</section>
+
+<section id="stats" hidden>
+  <button class="back" data-go="home">← Trang chủ</button><h2>Thống kê hôm nay</h2>
+  <div class="hero"><div class="n" id="stCook">–</div><p id="stSub">Suất cần nấu</p></div>
+  <label>Lớp</label><select id="stLop"><option value="">Tất cả lớp</option></select>
+  <div class="tabs" style="margin-top:10px"></div>
+  <div class="card" id="stList"></div>
+</section>
+
+<section id="scan" hidden>
+  <button class="back" data-go="home">← Trang chủ</button><h2>Quét QR nhận suất</h2>
+  <div class="card" id="scLogin"><label>Mật khẩu giáo viên</label><input type="password" id="scPass" autocomplete="current-password">
+    <button class="btn" id="scLoginBtn">Mở máy quét</button><div id="scLoginMsg"></div></div>
+  <div id="scBox" hidden><div id="reader"></div><div id="scMsg"></div>
+    <div class="card" style="margin-top:12px"><label>Hoặc nhập mã học sinh</label><input id="scManual"><button class="btn" id="scManualBtn">Xác nhận nhận suất</button></div></div>
+</section>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+// Dán địa chỉ Web App của Apps Script vào đây
+const API='https://script.google.com/macros/s/AKfycbwPqPKfVC8umtDlg_q7RZZ--A5vKpatdpqjjribIYORIOW03m14LHGZ1qgemP1lyEw_/exec';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const THU=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+let pass='',timer=null,qr=null,last='',lastT=0;
+
+async function api(o){const r=await fetch(API,{method:'POST',body:JSON.stringify(o)});return r.json()}
+function vn(){const o={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).forEach(p=>o[p.type]=p.value);return{date:`${o.year}-${o.month}-${o.day}`,h:+o.hour}}
+function addDays(s,n){const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function fmt(s){const[y,m,d]=s.split('-');return`${d}/${m}/${y}`}
+function thu(s){return THU[new Date(s+'T00:00:00Z').getUTCDay()]}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function go(id){
+  $$('section').forEach(s=>s.hidden=s.id!==id);
+  clearInterval(timer);stopQR();
+  if(id==='lookup')needPicker('lookup','#lookup .pk');
+  if(id==='absent')initAbsent();
+  if(id==='stats'){loadStats();timer=setInterval(loadStats,30000)}
+  window.scrollTo(0,0);
+}
+$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+// ---- Chọn khối + lớp, gõ tên học sinh rồi chọn đúng bạn trong gợi ý
+let classes=[];
+const nat=(x,y)=>String(x).localeCompare(String(y),'vi',{numeric:true});
+function picker(box){
+  box.innerHTML='<label>Khối</label><select class="k"></select><label>Lớp</label><select class="l"></select><label>Họ tên học sinh</label><input class="n" placeholder="Gõ tên con (có dấu hoặc không dấu)" autocomplete="off"><div class="sg"></div><div class="pick msg ok" hidden></div>';
+  const k=box.querySelector('.k'),l=box.querySelector('.l'),n=box.querySelector('.n'),sg=box.querySelector('.sg'),pk=box.querySelector('.pick');
+  let sel=null,t=0;
+  const opt=(el,a,ph)=>el.innerHTML=`<option value="">${ph}</option>`+a.map(x=>`<option>${esc(x)}</option>`).join('');
+  const reset=()=>{sel=null;n.value='';sg.innerHTML='';pk.hidden=true};
+  const fill=()=>{opt(k,[...new Set(classes.map(c=>c.khoi))].sort(nat),'Chọn khối');opt(l,[],'Chọn lớp')};
+  fill();
+  k.onchange=()=>{opt(l,classes.filter(c=>c.khoi==k.value).map(c=>c.lop).sort(nat),'Chọn lớp');reset()};
+  l.onchange=reset;
+  n.oninput=()=>{
+    sel=null;pk.hidden=true;clearTimeout(t);
+    if(!k.value||!l.value){sg.innerHTML='<p class="sub">Chọn khối và lớp trước.</p>';return}
+    if(!n.value.trim()){sg.innerHTML='';return}
+    t=setTimeout(async()=>{
+      try{
+        const r=await api({action:'find',khoi:k.value,lop:l.value,name:n.value});
+        if(!r.ok)throw new Error(r.error);
+        sg.innerHTML=r.list.length?r.list.map((x,i)=>`<button type="button" class="sgb" data-i="${i}">${esc(x.ten)} <small>Lớp ${esc(x.lop)} · MSHS ${esc(x.id)}</small></button>`).join(''):'<p class="sub">Không thấy học sinh này trong lớp đã chọn.</p>';
+        sg.querySelectorAll('.sgb').forEach(b=>b.onclick=()=>{sel=r.list[b.dataset.i];n.value=sel.ten;sg.innerHTML='';pk.hidden=false;pk.textContent=`Đã chọn: ${sel.ten} – Lớp ${sel.lop} – MSHS ${sel.id}`});
+      }catch(e){sg.innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+    },300);
+  };
+  const get=()=>sel&&sel.id;get.fill=fill;return get;
+}
+const getters={};
+async function needPicker(id,sel){
+  const box=$(sel);
+  if(!getters[id]){box.innerHTML='';getters[id]=picker(box)}
+  let er=box.parentNode.querySelector('.apierr');
+  if(!er){er=document.createElement('div');er.className='msg er apierr';er.hidden=true;box.parentNode.insertBefore(er,box)}
+  if(classes.length){getters[id].fill();er.hidden=true;return}
+  try{
+    const r=await api({action:'classes'});if(!r.ok)throw new Error(r.error);
+    classes=r.classes;Object.values(getters).forEach(g=>g.fill());er.hidden=true;
+    if(!classes.length){er.textContent='Chưa có dữ liệu học sinh trong Google Sheet (trang HocSinh).';er.hidden=false}
+  }catch(e){er.textContent='Chưa kết nối được dữ liệu: '+e.message+'. Kiểm tra địa chỉ API và việc triển khai Apps Script.';er.hidden=false}
+}
+needPicker('lookup','#lookup .pk');
+$('#lkMonth').value=vn().date.slice(0,7);
+
+// ---- Tra cứu
+$('#lkBtn').onclick=async()=>{
+  const id=getters.lookup&&getters.lookup();
+  if(!id){$('#lkOut').innerHTML='<div class="msg wn">Chọn khối, lớp, gõ tên rồi bấm chọn đúng học sinh trong gợi ý.</div>';return}
+  $('#lkOut').innerHTML='<p class="sub">Đang tải…</p>';
+  try{
+    const r=await api({action:'history',id,month:$('#lkMonth').value});
+    if(!r.ok)throw new Error(r.error);
+    const c=k=>r.days.filter(d=>d.s===k).length;
+    const L={vang:'Vắng',nhan:'Đã nhận suất ăn',chua:'Chưa nhận suất ăn',nodata:'Chưa có dữ liệu'},T={vang:'vang',nhan:'an',chua:'chua',nodata:'nd'};
+    $('#lkOut').innerHTML=`<div class="card"><b>${esc(r.ten)}</b> – Lớp ${esc(r.lop)}<br><span class="sub">Đã nhận ${c('nhan')} · Chưa nhận ${c('chua')} · Vắng ${c('vang')}</span>`+
+      (r.days.length?r.days.map(d=>`<div class="row"><div>${thu(d.d)}, ${fmt(d.d)}${d.lydo?`<small>Lý do: ${esc(d.lydo)}</small>`:''}</div><span class="tag ${T[d.s]}">${L[d.s]}</span></div>`).join(''):'<p>Không có ngày học trong tháng này.</p>')+'</div>';
+  }catch(e){$('#lkOut').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+};
+
+// ---- Đăng ký vắng
+function window13(){return vn().h>=13||vn().h<5}
+function nextMealDate(){const n=vn();return n.h>=13?addDays(n.date,1):n.date}
+function initAbsent(){
+  const open=window13();
+  $('#abClosed').hidden=open;$('#abForm').hidden=!open;
+  if(!open)return;
+  needPicker('absent','#absent .pk');
+  const min=nextMealDate();$('#abDate').min=min;$('#abDate').max=addDays(min,60);
+  if(!$('#abDate').value||$('#abDate').value<min)$('#abDate').value=min;
+  $('#abDate').onchange=()=>$('#abThu').textContent=thu($('#abDate').value);$('#abDate').onchange();
+}
+$('#abChk').onchange=e=>{$('#abReason').disabled=!e.target.checked;if(!e.target.checked)$('#abReason').value=''};
+$('#abBtn').onclick=async()=>{
+  const id=getters.absent&&getters.absent(),m=$('#abMsg');
+  if(!id){m.innerHTML='<div class="msg wn">Chọn khối, lớp, gõ tên rồi bấm chọn đúng học sinh trong gợi ý.</div>';return}
+  if(!window13()){initAbsent();return}
+  $('#abBtn').disabled=true;
+  try{
+    const r=await api({action:'absent',id,date:$('#abDate').value,reason:$('#abReason').value.trim()});
+    if(!r.ok)throw new Error(r.error);
+    m.innerHTML=`<div class="msg ok">Đã đăng ký vắng ${thu($('#abDate').value)}, ${fmt($('#abDate').value)} cho ${esc(r.ten)}.</div>`;
+  }catch(e){m.innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+  $('#abBtn').disabled=false;
+};
+
+// ---- Thống kê
+let stData=null,stFilter='all';
+const LBL={all:'Tất cả',chua:'Chưa nhận',nhan:'Đã nhận',vang:'Vắng'};
+function drawTabs(){
+  $('#stats .tabs').innerHTML=Object.keys(LBL).map(k=>{
+    const n=stData?(k==='all'?stData.list.length:stData.list.filter(x=>x.s===k).length):0;
+    return`<button class="${stFilter===k?'on':''}" data-f="${k}">${LBL[k]} (${n})</button>`}).join('');
+  $$('#stats .tabs button').forEach(b=>b.onclick=()=>{stFilter=b.dataset.f;drawTabs();drawList()});
+}
+function drawList(){
+  if(!stData)return;
+  const lop=$('#stLop').value;
+  const a=stData.list.filter(x=>(stFilter==='all'||x.s===stFilter)&&(!lop||x.lop==lop));
+  $('#stList').innerHTML=a.length?a.map(x=>`<div class="row"><div>${esc(x.ten)}<small>Lớp ${esc(x.lop)}</small></div><span class="tag ${x.s==='nhan'?'an':x.s==='vang'?'vang':'chua'}">${x.s==='nhan'?'Đã nhận suất ăn':x.s==='vang'?'Vắng bán trú':'Chưa nhận suất ăn'}</span></div>`).join(''):'<p class="sub">Không có học sinh.</p>';
+}
+async function loadStats(){
+  try{
+    const r=await api({action:'stats'});if(!r.ok)throw new Error(r.error);
+    stData=r;$('#stCook').textContent=r.cook;
+    $('#stSub').textContent=`Suất cần nấu ${thu(r.date)}, ${fmt(r.date)} · Tổng ${r.total} − vắng ${r.vang}`;
+    const ls=[...new Set(r.list.map(x=>x.lop))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
+    const cur=$('#stLop').value;$('#stLop').innerHTML='<option value="">Tất cả lớp</option>'+ls.map(l=>`<option>${esc(l)}</option>`).join('');$('#stLop').value=cur;
+    drawTabs();drawList();
+  }catch(e){$('#stList').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+}
+$('#stLop').onchange=drawList;
+
+// ---- Quét QR
+$('#scLoginBtn').onclick=async()=>{
+  try{
+    const r=await api({action:'auth',pass:$('#scPass').value});
+    if(!r.ok)throw new Error(r.error);
+    pass=$('#scPass').value;$('#scLogin').hidden=true;$('#scBox').hidden=false;startQR();
+  }catch(e){$('#scLoginMsg').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+};
+function startQR(){
+  qr=new Html5Qrcode('reader');
+  qr.start({facingMode:'environment'},{fps:10,qrbox:240},txt=>{
+    if(txt===last&&Date.now()-lastT<4000)return;last=txt;lastT=Date.now();doScan(txt);
+  }).catch(()=>{$('#scMsg').innerHTML='<div class="msg er">Không mở được camera. Cho phép camera hoặc nhập mã tay.</div>'});
+}
+function stopQR(){if(qr){qr.stop().catch(()=>{});qr=null}pass='';$('#scLogin').hidden=false;$('#scBox').hidden=true;$('#scPass').value='';$('#scLoginMsg').innerHTML=''}
+async function doScan(id){
+  try{
+    const r=await api({action:'scan',pass,id:id.trim()});
+    if(!r.ok)throw new Error(r.error);
+    const cls=r.already?'wn':'ok',t=r.already?'đã nhận suất trước đó':'đã nhận suất';
+    $('#scMsg').innerHTML=`<div class="msg ${cls}">${esc(r.ten)} (Lớp ${esc(r.lop)}) – ${t}${r.vang?'. Lưu ý: phụ huynh đã đăng ký vắng hôm nay.':''}</div>`;
+  }catch(e){$('#scMsg').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+}
+$('#scManualBtn').onclick=()=>{const v=$('#scManual').value.trim();if(v){doScan(v);$('#scManual').value=''}};
+</script>
+</body>
+</html>
