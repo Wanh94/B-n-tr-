@@ -86,15 +86,15 @@ input[type=checkbox]{width:auto}
   <button class="back" data-go="home">← Trang chủ</button><h2>Quét QR nhận suất</h2>
   <div class="card" id="scLogin"><label>Mật khẩu giáo viên</label><input type="password" id="scPass" autocomplete="current-password">
     <button class="btn" id="scLoginBtn">Mở máy quét</button><div id="scLoginMsg"></div></div>
-  <div id="scBox" hidden><div id="reader"></div><div id="scMsg"></div>
-    <div class="card" style="margin-top:12px"><label>Hoặc nhập mã học sinh</label><input id="scManual"><button class="btn" id="scManualBtn">Xác nhận nhận suất</button></div></div>
+  <div id="scBox" hidden><div id="scQ" class="sub"></div><div id="reader"></div><div id="scMsg"></div>
+    <div class="card" style="margin-top:12px"><label>Hoặc nhập mã học sinh (máy quét mã vạch tự gõ và Enter)</label><input id="scManual" inputmode="numeric" autocomplete="off"><button class="btn" id="scManualBtn">Xác nhận nhận suất</button></div></div>
 </section>
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 // Dán địa chỉ Web App của Apps Script vào đây
-const API='https://script.google.com/macros/s/AKfycbwPqPKfVC8umtDlg_q7RZZ--A5vKpatdpqjjribIYORIOW03m14LHGZ1qgemP1lyEw_/exec';
+const API='https://script.google.com/macros/s/AKfycbwJQA8Yc0zUjKELHpADSWekqBWHFzpqQvmF_qQ0IiBpgiTvVD3WyftnWPdGgHAksExxNQ/exec';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const THU=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
 let pass='',timer=null,qr=null,last='',lastT=0;
@@ -228,30 +228,53 @@ async function loadStats(){
 }
 $('#stLop').onchange=drawList;
 
-// ---- Quét QR
+// ---- Quét QR: tải sẵn danh sách, hiện tên ngay, gửi ghi nhận chạy nền
+let byId={},gotSet=new Set(),abSet=new Set(),ctx=null,sending=false;
+let queue=[];try{queue=JSON.parse(localStorage.getItem('scQueue')||'[]')}catch(e){}
+const saveQ=()=>{try{localStorage.setItem('scQueue',JSON.stringify(queue))}catch(e){}};
+function beep(f,d){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;g.gain.value=.2;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+d)}catch(e){}}
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+function showQ(){$('#scQ').textContent=queue.length?`Đang gửi ${queue.length} lượt lên Sheet…`:'Đã đồng bộ với Sheet'}
 $('#scLoginBtn').onclick=async()=>{
+  const b=$('#scLoginBtn');b.disabled=true;$('#scLoginMsg').innerHTML='<p class="sub">Đang tải danh sách…</p>';
   try{
-    const r=await api({action:'auth',pass:$('#scPass').value});
+    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    const p=$('#scPass').value,r=await api({action:'roster',pass:p});
     if(!r.ok)throw new Error(r.error);
-    pass=$('#scPass').value;$('#scLogin').hidden=true;$('#scBox').hidden=false;startQR();
+    pass=p;byId={};r.list.forEach(x=>byId[x.id]=x);gotSet=new Set(r.got);abSet=new Set(r.ab);
+    $('#scLogin').hidden=true;$('#scBox').hidden=false;$('#scLoginMsg').innerHTML='';
+    startQR();showQ();flush();$('#scManual').focus();
   }catch(e){$('#scLoginMsg').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+  b.disabled=false;
 };
 function startQR(){
-  qr=new Html5Qrcode('reader');
-  qr.start({facingMode:'environment'},{fps:10,qrbox:240},txt=>{
-    if(txt===last&&Date.now()-lastT<4000)return;last=txt;lastT=Date.now();doScan(txt);
+  qr=new Html5Qrcode('reader',{formatsToSupport:[Html5QrcodeSupportedFormats.QR_CODE],experimentalFeatures:{useBarCodeDetectorIfSupported:true}});
+  qr.start({facingMode:'environment'},{fps:15,qrbox:240},txt=>{
+    if(txt===last&&Date.now()-lastT<3000)return;last=txt;lastT=Date.now();doScan(txt);
   }).catch(()=>{$('#scMsg').innerHTML='<div class="msg er">Không mở được camera. Cho phép camera hoặc nhập mã tay.</div>'});
 }
-function stopQR(){if(qr){qr.stop().catch(()=>{});qr=null}pass='';$('#scLogin').hidden=false;$('#scBox').hidden=true;$('#scPass').value='';$('#scLoginMsg').innerHTML=''}
-async function doScan(id){
-  try{
-    const r=await api({action:'scan',pass,id:id.trim()});
-    if(!r.ok)throw new Error(r.error);
-    const cls=r.already?'wn':'ok',t=r.already?'đã nhận suất trước đó':'đã nhận suất';
-    $('#scMsg').innerHTML=`<div class="msg ${cls}">${esc(r.ten)} (Lớp ${esc(r.lop)}) – ${t}${r.vang?'. Lưu ý: phụ huynh đã đăng ký vắng hôm nay.':''}</div>`;
-  }catch(e){$('#scMsg').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+function stopQR(){if(qr){qr.stop().catch(()=>{});qr=null}if(!queue.length)pass='';$('#scLogin').hidden=false;$('#scBox').hidden=true;$('#scPass').value='';$('#scLoginMsg').innerHTML=''}
+function doScan(raw){
+  const id=String(raw).trim(),x=byId[id],m=$('#scMsg');
+  if(!x){m.innerHTML=`<div class="msg er">Không có mã “${esc(id)}” trong danh sách</div>`;beep(220,.3);buzz([200,100,200]);return}
+  if(gotSet.has(id)){m.innerHTML=`<div class="msg wn">${esc(x.ten)} (Lớp ${esc(x.lop)}) – đã nhận suất trước đó</div>`;beep(440,.25);buzz(150);return}
+  gotSet.add(id);queue.push(id);saveQ();showQ();
+  m.innerHTML=`<div class="msg ok">${esc(x.ten)} (Lớp ${esc(x.lop)}) – đã nhận suất${abSet.has(id)?'. Lưu ý: phụ huynh đã đăng ký vắng hôm nay.':''}</div>`;
+  beep(900,.12);buzz(60);flush();
 }
-$('#scManualBtn').onclick=()=>{const v=$('#scManual').value.trim();if(v){doScan(v);$('#scManual').value=''}};
+async function flush(){
+  if(sending||!queue.length||!pass)return;
+  sending=true;const batch=queue.slice();
+  try{
+    const r=await api({action:'scan',pass,ids:batch});
+    if(!r.ok)throw new Error(r.error);
+    queue=queue.slice(batch.length);saveQ();
+  }catch(e){setTimeout(flush,5000)}
+  sending=false;showQ();if(queue.length&&pass)flush();
+}
+const manual=()=>{const v=$('#scManual').value.trim();if(v){doScan(v);$('#scManual').value=''}$('#scManual').focus()};
+$('#scManualBtn').onclick=manual;
+$('#scManual').onkeydown=e=>{if(e.key==='Enter')manual()};
 </script>
 </body>
 </html>
