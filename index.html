@@ -4,68 +4,87 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bán trú</title>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f6f2;--card:#fff;--ink:#1c2b24;--mute:#5f6f66;--line:#dbe4dd;--g:#2e6b4f;--gl:#dcefe3;--r:#b8432f;--rl:#f9dfd8;--y:#8a6a12;--yl:#f7ecc6}
-@media(prefers-color-scheme:dark){:root{--bg:#121a16;--card:#1b261f;--ink:#e7efe9;--mute:#9bb0a3;--line:#2c3b32;--g:#7fd0a3;--gl:#223d2e;--r:#ff9b86;--rl:#4a2720;--y:#ecc65a;--yl:#443a18}}
+:root{color-scheme:light;--ink:#5b1a14;--ol:#9b2a1f;--mute:#8a5a44;--line:#e8c8bf;--card:#fff;--g:#1a7a4a;--gl:#d8f5e6;--r:#c62f35;--rl:#ffe1e1;--y:#8a5d00;--yl:#fff2bf;--acc:#1fa496;--accs:#147a6f;--accl:#e1f6f3}
+.c1{--acc:#1fa496;--accs:#147a6f;--accl:#e1f6f3}.c2{--acc:#f08a1c;--accs:#b8620a;--accl:#fff0dc}
+.c3{--acc:#3f6fe0;--accs:#2a4aa8;--accl:#e3ebff}.c4{--acc:#c9409f;--accs:#92296f;--accl:#fbe3f3}
 *{box-sizing:border-box}
-body{margin:0;font:16px/1.5 "Be Vietnam Pro",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-.w{max-width:640px;margin:0 auto;padding:16px}
-h1{font-size:26px;font-weight:800;margin:8px 0 2px}h2{font-size:20px;margin:4px 0 12px}
-.sub{color:var(--mute);margin:0 0 16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.big{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px 14px;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:110px}
-.big b{display:block;font-size:18px;margin-bottom:4px}.big span{color:var(--mute);font-size:14px}
-.big:hover,.big:focus-visible{border-color:var(--g)}
-.back{background:none;border:0;color:var(--g);font:inherit;font-weight:600;padding:8px 0;cursor:pointer}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
-label{display:block;font-size:14px;font-weight:600;margin:10px 0 4px}
-select,input,textarea{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
-input[type=checkbox]{width:auto}
-.chk{display:flex;gap:8px;align-items:center;margin-top:12px;font-weight:600}
-.btn{width:100%;margin-top:14px;padding:12px;border:0;border-radius:10px;background:var(--g);color:#fff;font:inherit;font-weight:700;cursor:pointer}
-@media(prefers-color-scheme:dark){.btn{color:#10231a}}
-.btn:disabled{opacity:.5}
-.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
-.row:last-child{border:0}.row small{color:var(--mute);display:block}
-.tag{padding:3px 10px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
-.an{background:var(--gl);color:var(--g)}.vang{background:var(--rl);color:var(--r)}.chua{background:var(--yl);color:var(--y)}.nd{background:var(--line);color:var(--mute)}
-.hero{background:var(--g);color:#fff;border-radius:14px;padding:18px;margin-bottom:12px}
-@media(prefers-color-scheme:dark){.hero{color:#10231a}}
-.hero .n{font-size:56px;font-weight:800;line-height:1}.hero p{margin:6px 0 0}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.tabs button{padding:6px 12px;border:1.5px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
-.tabs button.on{background:var(--g);border-color:var(--g);color:#fff}
-.sgb{display:block;width:100%;text-align:left;font:inherit;color:inherit;padding:10px;margin-top:6px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;cursor:pointer}.sgb small{color:var(--mute);margin-left:6px}.sgb:hover,.sgb:focus-visible{border-color:var(--g)}
-.msg{padding:12px;border-radius:10px;margin-top:12px;font-weight:600}
+html{background:linear-gradient(#6ec6ff 0%,#a9ddff 35%,#d2f0ff 62%)}
+body{margin:0;min-height:100vh;font:17px/1.5 Nunito,system-ui,sans-serif;color:var(--ink)}
+body::before{content:"";position:fixed;inset:auto 0 0 0;height:40vh;z-index:-2;background:radial-gradient(ellipse 75% 70% at 12% 100%,#86d445 0 99%,transparent 100%),radial-gradient(ellipse 85% 85% at 92% 100%,#5eb62c 0 99%,transparent 100%),linear-gradient(#7fcb3c,#58a828)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 80px 24px at 14% 9%,#fff 0 62%,transparent 66%),radial-gradient(ellipse 110px 30px at 84% 17%,#fff 0 62%,transparent 66%);opacity:.9}
+.w{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+h1,h2,.big b,.hero .n{font-family:"Baloo 2",Nunito,sans-serif}
+.top{text-align:center;padding:10px 0 4px}
+.mascot{font-size:60px;line-height:1;display:inline-block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-4deg)}}
+h1{font-size:42px;font-weight:800;margin:2px 0 0;line-height:1.1;color:#fff;-webkit-text-stroke:7px var(--ol);paint-order:stroke fill;text-shadow:0 4px 0 rgba(155,42,31,.35)}
+.sub{color:#1c4f7c;margin:0 0 14px;font-weight:800}
+.top .sub{margin-top:6px}
+.bar{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px;margin-bottom:16px}
+h2{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;padding:6px 10px;background:#fff;border:3px solid var(--ol);border-radius:16px;box-shadow:0 4px 0 rgba(155,42,31,.3);font-size:20px;font-weight:800;line-height:1.2;text-align:center}
+.ic{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe27a,#f5a623);border:2.5px solid #b8621b;box-shadow:0 2px 0 #b8621b;font-style:normal;font-size:17px}
+.back{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffc861,#f08a1c);border:3px solid #b8621b;box-shadow:0 4px 0 #b8621b;color:#fff;font:800 26px/1 Nunito,sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.25);cursor:pointer;padding:0}
+.back:active{transform:translateY(3px);box-shadow:0 1px 0 #b8621b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.big{display:flex;flex-direction:column;align-items:center;border:0;border-radius:22px;padding:14px 10px 12px;text-align:center;font:inherit;color:#fff;cursor:pointer;min-height:136px;background:linear-gradient(160deg,color-mix(in srgb,var(--acc) 78%,#fff),var(--acc));box-shadow:0 6px 0 var(--accs),0 10px 14px rgba(0,0,0,.18);transition:transform .12s,box-shadow .12s}
+.big i{display:grid;place-items:center;width:56px;height:56px;margin-bottom:6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe27a,#f5a623);border:3px solid #b8621b;box-shadow:0 3px 0 #b8621b;font-style:normal;font-size:28px}
+.big b{display:block;font-size:19px;font-weight:800;line-height:1.2;text-shadow:0 2px 0 rgba(0,0,0,.28)}
+.big span{margin-top:2px;font-size:13px;font-weight:700;color:#fff;opacity:.95;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--accs)}
+.big:focus-visible,.btn:focus-visible,.back:focus-visible{outline:4px solid #fff;outline-offset:2px;box-shadow:0 0 0 7px var(--ol)}
+.card{background:var(--card);border:3px solid var(--ol);border-radius:20px;padding:16px;margin-bottom:14px;box-shadow:0 5px 0 rgba(155,42,31,.3)}
+label{display:block;font-size:15px;font-weight:800;margin:12px 0 5px}
+select,input,textarea{width:100%;font:inherit;font-weight:700;padding:10px 12px;border:3px solid #d49a8c;border-radius:14px;background:#fff;color:var(--ink)}
+select:focus,input:focus,textarea:focus{outline:3px solid var(--acc);outline-offset:1px;border-color:var(--ol)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
+.chk{display:flex;gap:10px;align-items:center;margin-top:14px;font-weight:800}
+.btn{width:100%;margin-top:14px;padding:11px;border:0;border-radius:16px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 80%,#fff),var(--acc));color:#fff;font:inherit;font-size:17px;font-weight:800;text-shadow:0 2px 0 rgba(0,0,0,.3);cursor:pointer;box-shadow:0 5px 0 var(--accs);transition:transform .12s,box-shadow .12s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accs)}
+.btn:disabled{opacity:.55}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 0;border-bottom:2.5px dashed var(--line);font-weight:700}
+.row:last-child{border:0}.row small{color:var(--mute);display:block;font-weight:600}
+.tag{padding:4px 12px;border-radius:99px;font-size:14px;font-weight:800;white-space:nowrap}
+.an{background:var(--gl);color:var(--g)}.vang{background:var(--rl);color:var(--r)}.chua{background:var(--yl);color:var(--y)}.nd{background:#e8eef4;color:#5d6b7a}
+.tag.an::before{content:"😋 "}.tag.vang::before{content:"🙈 "}.tag.chua::before{content:"⏳ "}.tag.nd::before{content:"📅 "}
+.hero{position:relative;overflow:hidden;background:linear-gradient(160deg,#ffd75e,#ff9f2e);color:var(--ink);border:3px solid #b8621b;border-radius:22px;padding:14px 20px;margin-bottom:14px;box-shadow:0 5px 0 #b8621b,0 10px 14px rgba(0,0,0,.15)}
+.hero .n{font-size:62px;font-weight:800;line-height:1}.hero p{margin:6px 0 0;font-weight:800}
+.hero .hi{position:absolute;right:14px;top:8px;font-size:58px;animation:bob 2.8s ease-in-out infinite}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{padding:6px 14px;border:3px solid var(--ol);border-radius:99px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.tabs button.on{background:var(--acc);border-color:var(--accs);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.sgb{display:block;width:100%;text-align:left;font:inherit;font-weight:800;color:inherit;padding:10px 12px;margin-top:8px;background:#fff;border:3px solid var(--ol);border-radius:16px;box-shadow:0 3px 0 rgba(155,42,31,.3);cursor:pointer}
+.sgb small{color:var(--mute);margin-left:6px;font-weight:700}.sgb:hover,.sgb:focus-visible{background:var(--accl)}
+.msg{padding:12px 14px;border-radius:16px;margin-top:12px;font-weight:800;border:2.5px solid currentColor}
 .ok{background:var(--gl);color:var(--g)}.er{background:var(--rl);color:var(--r)}.wn{background:var(--yl);color:var(--y)}
-#reader{width:100%;border-radius:12px;overflow:hidden}
+#reader{width:100%;border-radius:18px;overflow:hidden;border:4px solid var(--ol)}
 [hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body><div class="w">
 
 <section id="home">
-  <h1>Bán trú</h1>
-  <p class="sub">Suất ăn trưa của học sinh</p>
+  <div class="top"><div class="mascot">🍚</div><h1>Bán trú</h1><p class="sub">Bữa trưa của các bé ở trường 🌈</p></div>
   <div class="grid">
-    <button class="big" data-go="lookup"><b>Tra cứu học sinh</b><span>Xem ngày ăn, ngày vắng</span></button>
-    <button class="big" data-go="absent"><b>Đăng ký vắng</b><span>Báo vắng bán trú</span></button>
-    <button class="big" data-go="stats"><b>Thống kê</b><span>Danh sách hôm nay</span></button>
-    <button class="big" data-go="scan"><b>Quét QR</b><span>Dành cho giáo viên</span></button>
+    <button class="big c1" data-go="lookup"><i>🔍</i><b>Tra cứu học sinh</b><span>Xem ngày ăn, ngày vắng</span></button>
+    <button class="big c2" data-go="absent"><i>📝</i><b>Đăng ký vắng</b><span>Báo vắng bán trú</span></button>
+    <button class="big c3" data-go="stats"><i>📊</i><b>Thống kê</b><span>Danh sách hôm nay</span></button>
+    <button class="big c4" data-go="scan"><i>📷</i><b>Quét QR</b><span>Dành cho giáo viên</span></button>
   </div>
 </section>
 
-<section id="lookup" hidden>
-  <button class="back" data-go="home">← Trang chủ</button><h2>Tra cứu học sinh</h2>
+<section id="lookup" class="c1" hidden>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">🔍</i>Tra cứu học sinh</h2></div>
   <div class="card"><div class="pk"></div>
     <label>Tháng cần xem</label><input type="month" id="lkMonth">
     <button class="btn" id="lkBtn">Xem</button></div>
   <div id="lkOut"></div>
 </section>
 
-<section id="absent" hidden>
-  <button class="back" data-go="home">← Trang chủ</button><h2>Đăng ký vắng bán trú</h2>
+<section id="absent" class="c2" hidden>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📝</i>Đăng ký vắng bán trú</h2></div>
   <div id="abClosed" class="msg er" hidden>Ngoài thời gian đăng ký. Mở từ 13:00 đến 05:00 sáng hôm sau.</div>
   <div class="card" id="abForm"><div class="pk"></div>
     <label>Ngày vắng</label><input type="date" id="abDate"><small id="abThu" style="color:var(--mute)"></small>
@@ -74,16 +93,16 @@ input[type=checkbox]{width:auto}
     <button class="btn" id="abBtn">Gửi đăng ký</button><div id="abMsg"></div></div>
 </section>
 
-<section id="stats" hidden>
-  <button class="back" data-go="home">← Trang chủ</button><h2>Thống kê hôm nay</h2>
-  <div class="hero"><div class="n" id="stCook">–</div><p id="stSub">Suất cần nấu</p></div>
+<section id="stats" class="c3" hidden>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📊</i>Thống kê hôm nay</h2></div>
+  <div class="hero"><span class="hi">🍲</span><div class="n" id="stCook">–</div><p id="stSub">Suất cần nấu</p></div>
   <label>Lớp</label><select id="stLop"><option value="">Tất cả lớp</option></select>
   <div class="tabs" style="margin-top:10px"></div>
   <div class="card" id="stList"></div>
 </section>
 
-<section id="scan" hidden>
-  <button class="back" data-go="home">← Trang chủ</button><h2>Quét QR nhận suất</h2>
+<section id="scan" class="c4" hidden>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📷</i>Quét QR nhận suất</h2></div>
   <div class="card" id="scLogin"><label>Mật khẩu giáo viên</label><input type="password" id="scPass" autocomplete="current-password">
     <button class="btn" id="scLoginBtn">Mở máy quét</button><div id="scLoginMsg"></div></div>
   <div id="scBox" hidden><div id="scQ" class="sub"></div><div id="reader"></div><div id="scMsg"></div>
