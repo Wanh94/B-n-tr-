@@ -94,9 +94,10 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
 </section>
 
 <section id="stats" class="c3" hidden>
-  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📊</i>Thống kê hôm nay</h2></div>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📊</i>Thống kê</h2></div>
   <div class="hero"><span class="hi">🍲</span><div class="n" id="stCook">–</div><p id="stSub">Suất cần nấu</p></div>
-  <label>Lớp</label><select id="stLop"><option value="">Tất cả lớp</option></select>
+  <div id="stWarn"></div>
+  <label>Ngày xem</label><input type="date" id="stDate"><label>Lớp</label><select id="stLop"><option value="">Tất cả lớp</option></select>
   <div class="tabs" style="margin-top:10px"></div>
   <div class="card" id="stList"></div>
 </section>
@@ -113,7 +114,7 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 // Dán địa chỉ Web App của Apps Script vào đây
-const API='https://script.google.com/macros/s/AKfycbwtS0c2O081GSq_-kM8zp_vQbh1Ot-H-oA4B8s-vGi8l7oEqdMckaGss46cSYifql7h8g/exec';
+const API='https://script.google.com/macros/s/AKfycbzFoQ_dlFNnyinykQpu_-kCvBv7MSqJs6HpiUS4oLzvgeOtSHx-qVbS3ZHMJ4_0kqgAjQ/exec';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const THU=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
 let pass='',timer=null,qr=null,last='',lastT=0;
@@ -130,7 +131,7 @@ function go(id){
   clearInterval(timer);stopQR();
   if(id==='lookup')needPicker('lookup','#lookup .pk');
   if(id==='absent')initAbsent();
-  if(id==='stats'){loadStats();timer=setInterval(loadStats,30000)}
+  if(id==='stats'){$('#stDate').value=vn().date;loadStats();timer=setInterval(loadStats,30000)}
   window.scrollTo(0,0);
 }
 $$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
@@ -223,22 +224,27 @@ $('#abBtn').onclick=async()=>{
 // ---- Thống kê
 let stData=null,stFilter='all';
 const LBL={all:'Tất cả',chua:'Chưa nhận',nhan:'Đã nhận',vang:'Vắng'};
+const TAGS={nhan:['an','Đã nhận suất ăn'],vang:['vang','Vắng bán trú'],cho:['nd','Chưa đến ngày'],chua:['chua','Chưa nhận suất ăn']};
+const inTab=(x,k)=>k==='all'||(k==='vang'?x.v:x.s===k);
 function drawTabs(){
-  $('#stats .tabs').innerHTML=Object.keys(LBL).map(k=>{
-    const n=stData?(k==='all'?stData.list.length:stData.list.filter(x=>x.s===k).length):0;
+  const keys=stData&&stData.date>stData.today?['all','vang']:Object.keys(LBL);
+  if(!keys.includes(stFilter))stFilter='all';
+  $('#stats .tabs').innerHTML=keys.map(k=>{
+    const n=stData?stData.list.filter(x=>inTab(x,k)).length:0;
     return`<button class="${stFilter===k?'on':''}" data-f="${k}">${LBL[k]} (${n})</button>`}).join('');
   $$('#stats .tabs button').forEach(b=>b.onclick=()=>{stFilter=b.dataset.f;drawTabs();drawList()});
 }
 function drawList(){
   if(!stData)return;
   const lop=$('#stLop').value;
-  const a=stData.list.filter(x=>(stFilter==='all'||x.s===stFilter)&&(!lop||x.lop==lop));
-  $('#stList').innerHTML=a.length?a.map(x=>`<div class="row"><div>${esc(x.ten)}<small>Lớp ${esc(x.lop)}</small></div><span class="tag ${x.s==='nhan'?'an':x.s==='vang'?'vang':'chua'}">${x.s==='nhan'?'Đã nhận suất ăn':x.s==='vang'?'Vắng bán trú':'Chưa nhận suất ăn'}</span></div>`).join(''):'<p class="sub">Không có học sinh.</p>';
+  const a=stData.list.filter(x=>inTab(x,stFilter)&&(!lop||x.lop==lop));
+  $('#stList').innerHTML=a.length?a.map(x=>{const t=stFilter==='vang'?TAGS.vang:(TAGS[x.s]||TAGS.chua);return`<div class="row"><div>${esc(x.ten)}<small>Lớp ${esc(x.lop)}${x.v&&x.lydo?' · Lý do: '+esc(x.lydo):''}${x.v&&x.s==='nhan'&&stFilter!=='vang'?' · đã báo vắng':''}${x.v&&x.s==='nhan'&&stFilter==='vang'?' · vẫn đến nhận suất':''}</small></div><span class="tag ${t[0]}">${t[1]}</span></div>`}).join(''):`<p class="sub">${stFilter==='vang'?'Không có học sinh nào đăng ký vắng.':'Không có học sinh.'}</p>`;
 }
 async function loadStats(){
   try{
-    const r=await api({action:'stats'});if(!r.ok)throw new Error(r.error);
+    const r=await api({action:'stats',date:$('#stDate').value||vn().date});if(!r.ok)throw new Error(r.error);
     stData=r;$('#stCook').textContent=r.cook;
+    $('#stWarn').innerHTML=r.unmatched&&r.unmatched.length?`<div class="msg wn">Có ${r.unmatched.length} dòng vắng không khớp học sinh nào (MSHS: ${r.unmatched.map(esc).join(', ')}). Số vắng ở trên chưa tính các dòng này, hãy kiểm tra trang VangBanTru.</div>`:'';
     $('#stSub').textContent=`Suất cần nấu ${thu(r.date)}, ${fmt(r.date)} · Tổng ${r.total} − vắng ${r.vang}`;
     const ls=[...new Set(r.list.map(x=>x.lop))].sort((a,b)=>String(a).localeCompare(String(b),'vi',{numeric:true}));
     const cur=$('#stLop').value;$('#stLop').innerHTML='<option value="">Tất cả lớp</option>'+ls.map(l=>`<option>${esc(l)}</option>`).join('');$('#stLop').value=cur;
@@ -246,6 +252,7 @@ async function loadStats(){
   }catch(e){$('#stList').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
 }
 $('#stLop').onchange=drawList;
+$('#stDate').onchange=()=>{stFilter='all';loadStats()};
 
 // ---- Quét QR: tải sẵn danh sách, hiện tên ngay, gửi ghi nhận chạy nền
 let byId={},gotSet=new Set(),abSet=new Set(),ctx=null,sending=false;
