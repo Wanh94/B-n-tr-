@@ -303,7 +303,7 @@ async function runReport(){
     r.list.sort((a,b)=>nat(a.lop,b.lop));r.f=f;rpData=r;
     const S=k=>r.list.reduce((a,x)=>a+x[k],0),[y,m]=r.month.split('-');
     const who=f.lop?`Lớp ${f.lop}`:f.khoi?`Khối ${f.khoi}`:'Toàn trường';
-    $('#rpOut').innerHTML=`<div class="card"><b>Tháng ${+m}/${y} · ${esc(who)}</b><br>${r.list.length} học sinh · ${r.days} buổi đã học<br><span class="sub">Tổng: Đã nhận ${S('nhan')} · Vắng ${S('vang')} · Chưa nhận ${S('chua')}</span></div>`+
+    $('#rpOut').innerHTML=`<div class="card"><b>Tháng ${+m}/${y} · ${esc(who)}</b><br>${r.list.length} học sinh · ${r.days} buổi bán trú<br><span class="sub">Tổng: Đã nhận ${S('nhan')} · Vắng ${S('vang')} · Chưa nhận ${S('chua')}</span></div>`+
       `<div class="card"><div class="rp rph"><span>Học sinh</span><span>Đã nhận</span><span>Vắng</span><span>Chưa nhận</span></div>`+
       (r.list.length?r.list.map(x=>`<div class="row rp"><div>${esc(x.ten)}<small>Lớp ${esc(x.lop)}</small></div><span class="pill an">${x.nhan}</span><span class="pill vang">${x.vang}</span><span class="pill chua">${x.chua}</span></div>`).join(''):'<p class="sub">Không có học sinh.</p>')+'</div>';
     $('#rpXls').disabled=!r.list.length;
