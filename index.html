@@ -138,7 +138,12 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const THU=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
 let pass='',timer=null,qr=null,last='',lastT=0;
 
-async function api(o){const r=await fetch(API,{method:'POST',body:JSON.stringify(o)});return r.json()}
+async function api(o){
+  const r=await fetch(API,{method:'POST',body:JSON.stringify(o)}),t=await r.text();
+  try{return JSON.parse(t)}catch(e){
+    const w=t.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>|<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,140);
+    throw new Error('Google trả về trang lỗi thay vì dữ liệu'+(w?` ("${w}")`:'')+'. Kiểm tra mã Apps Script và quyền truy cập "Bất kỳ ai".')}
+}
 function vn(){const o={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).forEach(p=>o[p.type]=p.value);return{date:`${o.year}-${o.month}-${o.day}`,h:+o.hour}}
 function addDays(s,n){const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 function fmt(s){const[y,m,d]=s.split('-');return`${d}/${m}/${y}`}
