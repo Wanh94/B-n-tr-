@@ -319,7 +319,7 @@ $('#rpXls').onclick=async()=>{
   const r=rpData;if(!r)return;
   const [y,m]=r.month.split('-'),f=r.f,S=k=>r.list.reduce((a,x)=>a+x[k],0);
   const who=f.lop?`Lớp ${f.lop}`:f.khoi?`Khối ${f.khoi}`:'Toàn trường';
-  const rows=[[`BÁO CÁO BÁN TRÚ THÁNG ${+m}/${y}`],[`${who} · ${r.days} buổi đã học`],[],['STT','MSHS','Họ tên','Lớp','Đã nhận','Vắng','Chưa nhận']];
+  const rows=[[`BÁO CÁO BÁN TRÚ THÁNG ${+m}/${y}`],[`${who} · ${r.days} buổi bán trú`],[],['STT','MSHS','Họ tên','Lớp','Đã nhận','Vắng','Chưa nhận']];
   r.list.forEach((x,i)=>rows.push([i+1,x.id,x.ten,x.lop,x.nhan,x.vang,x.chua]));
   rows.push(['','','Tổng','',S('nhan'),S('vang'),S('chua')]);
   const name=`bao-cao-ban-tru-${r.month}${f.lop?'-'+f.lop:f.khoi?'-khoi'+f.khoi:''}`;
