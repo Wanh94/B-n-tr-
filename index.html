@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>  
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bán trú</title>
@@ -8,7 +8,7 @@
 <style>
 :root{color-scheme:light;--ink:#5b1a14;--ol:#9b2a1f;--mute:#8a5a44;--line:#e8c8bf;--card:#fff;--g:#1a7a4a;--gl:#d8f5e6;--r:#c62f35;--rl:#ffe1e1;--y:#8a5d00;--yl:#fff2bf;--acc:#1fa496;--accs:#147a6f;--accl:#e1f6f3}
 .c1{--acc:#1fa496;--accs:#147a6f;--accl:#e1f6f3}.c2{--acc:#f08a1c;--accs:#b8620a;--accl:#fff0dc}
-.c3{--acc:#3f6fe0;--accs:#2a4aa8;--accl:#e3ebff}.c4{--acc:#c9409f;--accs:#92296f;--accl:#fbe3f3}
+.c3{--acc:#3f6fe0;--accs:#2a4aa8;--accl:#e3ebff}.c4{--acc:#c9409f;--accs:#92296f;--accl:#fbe3f3}.c5{--acc:#e0524d;--accs:#a93632;--accl:#ffe3e1}
 *{box-sizing:border-box}
 html{background:linear-gradient(#6ec6ff 0%,#a9ddff 35%,#d2f0ff 62%)}
 body{margin:0;min-height:100vh;font:17px/1.5 Nunito,system-ui,sans-serif;color:var(--ink)}
@@ -28,6 +28,7 @@ h2{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;paddi
 .back{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffc861,#f08a1c);border:3px solid #b8621b;box-shadow:0 4px 0 #b8621b;color:#fff;font:800 26px/1 Nunito,sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.25);cursor:pointer;padding:0}
 .back:active{transform:translateY(3px);box-shadow:0 1px 0 #b8621b}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.grid .big:last-child:nth-child(odd){grid-column:1/-1}
 .big{display:flex;flex-direction:column;align-items:center;border:0;border-radius:22px;padding:14px 10px 12px;text-align:center;font:inherit;color:#fff;cursor:pointer;min-height:136px;background:linear-gradient(160deg,color-mix(in srgb,var(--acc) 78%,#fff),var(--acc));box-shadow:0 6px 0 var(--accs),0 10px 14px rgba(0,0,0,.18);transition:transform .12s,box-shadow .12s}
 .big i{display:grid;place-items:center;width:56px;height:56px;margin-bottom:6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe27a,#f5a623);border:3px solid #b8621b;box-shadow:0 3px 0 #b8621b;font-style:normal;font-size:28px}
 .big b{display:block;font-size:19px;font-weight:800;line-height:1.2;text-shadow:0 2px 0 rgba(0,0,0,.28)}
@@ -45,6 +46,12 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
 .btn:disabled{opacity:.55}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 0;border-bottom:2.5px dashed var(--line);font-weight:700}
 .row:last-child{border:0}.row small{color:var(--mute);display:block;font-weight:600}
+.rp{display:grid;grid-template-columns:1fr 58px 50px 58px;gap:6px;align-items:center}
+.rph{font-size:12px;line-height:1.15;font-weight:800;color:var(--mute);padding-bottom:6px;border-bottom:2.5px dashed var(--line)}
+.rph span+span,.pill{text-align:center}
+.pill{padding:3px 0;border-radius:12px;font-size:15px;font-weight:800}
+summary{font-weight:800;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}summary::after{content:' ▾';color:var(--mute)}details[open] summary::after{content:' ▴'}
+#rpXls{margin:0 0 14px}
 .tag{padding:4px 12px;border-radius:99px;font-size:14px;font-weight:800;white-space:nowrap}
 .an{background:var(--gl);color:var(--g)}.vang{background:var(--rl);color:var(--r)}.chua{background:var(--yl);color:var(--y)}.nd{background:#e8eef4;color:#5d6b7a}
 .tag.an::before{content:"😋 "}.tag.vang::before{content:"🙈 "}.tag.chua::before{content:"⏳ "}.tag.nd::before{content:"📅 "}
@@ -72,6 +79,7 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
     <button class="big c2" data-go="absent"><i>📝</i><b>Đăng ký vắng</b><span>Báo vắng bán trú</span></button>
     <button class="big c3" data-go="stats"><i>📊</i><b>Thống kê</b><span>Danh sách hôm nay</span></button>
     <button class="big c4" data-go="scan"><i>📷</i><b>Quét QR</b><span>Dành cho giáo viên</span></button>
+    <button class="big c5" data-go="report"><i>📅</i><b>Báo cáo tháng</b><span>Đã nhận, vắng, chưa nhận</span></button>
   </div>
 </section>
 
@@ -102,6 +110,17 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
   <div class="card" id="stList"></div>
 </section>
 
+<section id="report" class="c5" hidden>
+  <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📅</i>Báo cáo tháng</h2></div>
+  <details class="card"><summary>🔎 Lọc theo tháng, khối, lớp</summary>
+    <label>Tháng</label><input type="month" id="rpMonth">
+    <label>Khối</label><select id="rpKhoi"></select>
+    <label>Lớp</label><select id="rpLop"></select>
+  </details>
+  <button class="btn" id="rpXls" disabled>📥 Xuất Excel</button>
+  <div id="rpOut"></div>
+</section>
+
 <section id="scan" class="c4" hidden>
   <div class="bar"><button class="back" data-go="home" aria-label="Về trang chủ">←</button><h2><i class="ic">📷</i>Quét QR nhận suất</h2></div>
   <div class="card" id="scLogin"><label>Mật khẩu giáo viên</label><input type="password" id="scPass" autocomplete="current-password">
@@ -114,7 +133,7 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--acc)}
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 // Dán địa chỉ Web App của Apps Script vào đây
-const API='https://script.google.com/macros/s/AKfycbzFoQ_dlFNnyinykQpu_-kCvBv7MSqJs6HpiUS4oLzvgeOtSHx-qVbS3ZHMJ4_0kqgAjQ/exec';
+const API='https://script.google.com/macros/s/AKfycbz2bfIDlck2Imzt-rA05N8_YaXukNZSd2kwzhk7L0XHUk7OzM7WwkRIVV6-eYzIm_S-YA/exec';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const THU=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
 let pass='',timer=null,qr=null,last='',lastT=0;
@@ -130,6 +149,7 @@ function go(id){
   $$('section').forEach(s=>s.hidden=s.id!==id);
   clearInterval(timer);stopQR();
   if(id==='lookup')needPicker('lookup','#lookup .pk');
+  if(id==='report')initReport();
   if(id==='absent')initAbsent();
   if(id==='stats'){$('#stDate').value=vn().date;loadStats();timer=setInterval(loadStats,30000)}
   window.scrollTo(0,0);
@@ -253,6 +273,70 @@ async function loadStats(){
 }
 $('#stLop').onchange=drawList;
 $('#stDate').onchange=()=>{stFilter='all';loadStats()};
+
+// ---- Báo cáo tháng: vào là hiện cả danh sách, bộ lọc là tuỳ chọn
+let rpData=null,rpSeq=0,rpTimer=0;
+async function initReport(){
+  if(!$('#rpMonth').value)$('#rpMonth').value=vn().date.slice(0,7);
+  try{
+    if(!classes.length){const r=await api({action:'classes'});if(!r.ok)throw new Error(r.error);classes=r.classes}
+    const ks=[...new Set(classes.map(c=>c.khoi))].sort(nat);
+    $('#rpKhoi').innerHTML='<option value="">Tất cả khối</option>'+ks.map(k=>`<option>${esc(k)}</option>`).join('');
+    rpLops();runReport();
+  }catch(e){$('#rpOut').innerHTML=`<div class="msg er">Chưa kết nối được dữ liệu: ${esc(e.message)}</div>`}
+}
+function rpLops(){
+  const k=$('#rpKhoi').value,ls=[...new Set(classes.filter(c=>!k||c.khoi==k).map(c=>c.lop))].sort(nat);
+  $('#rpLop').innerHTML='<option value="">Tất cả lớp</option>'+ls.map(l=>`<option>${esc(l)}</option>`).join('');
+}
+const rpLater=()=>{clearTimeout(rpTimer);rpTimer=setTimeout(runReport,200)};
+$('#rpKhoi').onchange=()=>{rpLops();rpLater()};
+$('#rpLop').onchange=rpLater;$('#rpMonth').onchange=rpLater;
+async function runReport(){
+  if(!$('#rpMonth').value){$('#rpOut').innerHTML='<div class="msg wn">Chọn tháng cần xem.</div>';return}
+  const my=++rpSeq,f={month:$('#rpMonth').value,khoi:$('#rpKhoi').value,lop:$('#rpLop').value};
+  $('#rpOut').innerHTML='<p class="sub">Đang tải…</p>';$('#rpXls').disabled=true;
+  try{
+    const r=await api({action:'monthly',...f});
+    if(my!==rpSeq)return;
+    if(!r.ok)throw new Error(r.error);
+    r.list.sort((a,b)=>nat(a.lop,b.lop));r.f=f;rpData=r;
+    const S=k=>r.list.reduce((a,x)=>a+x[k],0),[y,m]=r.month.split('-');
+    const who=f.lop?`Lớp ${f.lop}`:f.khoi?`Khối ${f.khoi}`:'Toàn trường';
+    $('#rpOut').innerHTML=`<div class="card"><b>Tháng ${+m}/${y} · ${esc(who)}</b><br>${r.list.length} học sinh · ${r.days} buổi đã học<br><span class="sub">Tổng: Đã nhận ${S('nhan')} · Vắng ${S('vang')} · Chưa nhận ${S('chua')}</span></div>`+
+      `<div class="card"><div class="rp rph"><span>Học sinh</span><span>Đã nhận</span><span>Vắng</span><span>Chưa nhận</span></div>`+
+      (r.list.length?r.list.map(x=>`<div class="row rp"><div>${esc(x.ten)}<small>Lớp ${esc(x.lop)}</small></div><span class="pill an">${x.nhan}</span><span class="pill vang">${x.vang}</span><span class="pill chua">${x.chua}</span></div>`).join(''):'<p class="sub">Không có học sinh.</p>')+'</div>';
+    $('#rpXls').disabled=!r.list.length;
+  }catch(e){if(my===rpSeq)$('#rpOut').innerHTML=`<div class="msg er">${esc(e.message)}</div>`}
+}
+// Xuất Excel (.xlsx). Thư viện chỉ tải khi bấm nút để trang chủ luôn nhẹ; không tải được thì xuất .csv mở bằng Excel
+function loadXLSX(){return new Promise((ok,no)=>{
+  if(window.XLSX)return ok();
+  const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=()=>window.XLSX?ok():no();s.onerror=no;document.head.appendChild(s)})}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+$('#rpXls').onclick=async()=>{
+  const r=rpData;if(!r)return;
+  const [y,m]=r.month.split('-'),f=r.f,S=k=>r.list.reduce((a,x)=>a+x[k],0);
+  const who=f.lop?`Lớp ${f.lop}`:f.khoi?`Khối ${f.khoi}`:'Toàn trường';
+  const rows=[[`BÁO CÁO BÁN TRÚ THÁNG ${+m}/${y}`],[`${who} · ${r.days} buổi đã học`],[],['STT','MSHS','Họ tên','Lớp','Đã nhận','Vắng','Chưa nhận']];
+  r.list.forEach((x,i)=>rows.push([i+1,x.id,x.ten,x.lop,x.nhan,x.vang,x.chua]));
+  rows.push(['','','Tổng','',S('nhan'),S('vang'),S('chua')]);
+  const name=`bao-cao-ban-tru-${r.month}${f.lop?'-'+f.lop:f.khoi?'-khoi'+f.khoi:''}`;
+  $('#rpXls').disabled=true;
+  try{
+    await loadXLSX();
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:6},{wch:10},{wch:30},{wch:8},{wch:10},{wch:8},{wch:11}];
+    ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:6}},{s:{r:1,c:0},e:{r:1,c:6}}];
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,`Tháng ${m}-${y}`);
+    XLSX.writeFile(wb,name+'.xlsx');
+  }catch(e){
+    const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+    download(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),name+'.csv');
+  }
+  $('#rpXls').disabled=false;
+};
 
 // ---- Quét QR: tải sẵn danh sách, hiện tên ngay, gửi ghi nhận chạy nền
 let byId={},gotSet=new Set(),abSet=new Set(),ctx=null,sending=false;
